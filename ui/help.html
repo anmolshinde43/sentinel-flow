@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center | Sentinel-Flow</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0f172a; 
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary-accent: #3b82f6; 
+            --secondary-accent: #06b6d4; 
+            --card-bg: #1e293b;
+            --card-border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- TOP NAVBAR --- */
+        nav {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--text-main);
+            border-color: var(--text-muted);
+            background: var(--card-bg);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .help-container {
+            flex: 1;
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* --- HELP CARDS --- */
+        .help-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .help-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .help-card:hover {
+            transform: translateX(5px);
+            border-color: var(--secondary-accent);
+        }
+
+        .help-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .help-card p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .help-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight-text {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* --- SUPPORT SECTION --- */
+        .support-section {
+            margin-top: 4rem;
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .support-section p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .support-btn {
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .support-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="nav-logo">SENTINEL-FLOW</a>
+        <a href="index.html" class="back-btn">← Back to Dashboard</a> 
+    </nav>
+
+    <div class="help-container">
+        
+        <div class="header-section">
+            <h2 class="section-title">Help Center</h2>
+            <p class="section-subtitle">Everything you need to know about navigating the system.</p>
+        </div>
+
+        <div class="help-grid">
+            
+            <div class="help-card">
+                <h3>⚙️ How Sentinel-Flow Works</h3>
+                <p>
+                    Sentinel-Flow manages employee contracts using Smart Workflow Automation. 
+                    Each employee evaluation follows a dynamic rule system, ensuring that onboarding, 
+                    probation, and final reviews are routed to the correct personnel at the exact right time.
+                </p>
+            </div>
+
+            <div class="help-card">
+                <h3>🧠 AI Bias Detection</h3>
+                <p>
+                    To ensure fair and equitable evaluations across the workforce, the system integrates 
+                    advanced linguistic analysis. It actively scans reviewer comments and flags subjective, 
+                    emotional, or potentially biased language before final HR decisions are formalized.
+                </p>
+            </div>
+
+            <div class="help-card">
+                <h3>🔒 Data Security & Governance Vault</h3>
+                <p>
+                    Protecting your workforce data is our top priority. All employee records, performance metrics, 
+                    and smart contracts are heavily encrypted both in transit and at rest.
+                </p>
+                <p>
+                    Approved workflows and final evaluations are stored directly in the <span class="highlight-text">Governance Vault</span>. 
+                    This creates an immutable, tamper-proof audit trail that ensures your organization maintains 
+                    strict compliance with internal policies and global data privacy regulations.
+                </p>
+            </div>
+
+            <div class="help-card">
+                <h3>⚡ Automation & Compliance</h3>
+                <p>
+                    Once a workflow reaches its conclusion, decision letters are automatically generated, 
+                    populated with the correct employee data, and signed digitally, removing manual paperwork bottlenecks.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="support-section">
+            <p>Still need help? Our technical team is on standby.</p>
+            <a href="mailto:support@sentinelflow.com" class="support-btn">Contact IT Support</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

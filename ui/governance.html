@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Governance Vault | Sentinel-Flow</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0f172a; 
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary-accent: #3b82f6; 
+            --secondary-accent: #06b6d4; 
+            --success-accent: #10b981;
+            --warning-accent: #f59e0b;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- TOP NAVBAR --- */
+        nav {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--text-main);
+            border-color: var(--text-muted);
+            background: var(--card-bg);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .vault-container {
+            padding: 4rem 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* --- TABLE STYLING --- */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        .doc-name {
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .doc-icon {
+            color: var(--primary-accent);
+            font-size: 1.2rem;
+        }
+
+        /* --- BADGES & BUTTONS --- */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.signed { background: rgba(16, 185, 129, 0.15); color: var(--success-accent); }
+        .badge.verified { background: rgba(59, 130, 246, 0.15); color: var(--primary-accent); }
+        .badge.generated { background: rgba(245, 158, 11, 0.15); color: var(--warning-accent); }
+
+        .action-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            color: var(--primary-accent);
+            border-color: var(--primary-accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="nav-logo">SENTINEL-FLOW</a>
+        <a href="index.html" class="back-btn">← Back to Dashboard</a> 
+    </nav>
+
+    <div class="vault-container">
+        
+        <div class="header-section">
+            <h2 class="section-title">Governance Vault</h2>
+            <p class="section-subtitle">Immutable records, smart contracts, and secure audit logs.</p>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Document Reference</th>
+                        <th>Format</th>
+                        <th>Security Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="doc-name">
+                                <span class="doc-icon">📄</span> Intern Contract - Bamn Alex P.
+                            </div>
+                        </td>
+                        <td style="color: var(--text-muted);">PDF / SHA-256</td>
+                        <td><span class="badge signed">Signed</span></td>
+                        <td><button class="action-btn" onclick="alert('Downloading encrypted file...')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="doc-name">
+                                <span class="doc-icon">📊</span> Q3 Compliance Audit Report
+                            </div>
+                        </td>
+                        <td style="color: var(--text-muted);">PDF / SHA-256</td>
+                        <td><span class="badge verified">Verified</span></td>
+                        <td><button class="action-btn" onclick="alert('Viewing secure audit log...')">View Log</button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="doc-name">
+                                <span class="doc-icon">✉️</span> Decision Letter - Eva R.
+                            </div>
+                        </td>
+                        <td style="color: var(--text-muted);">PDF / PENDING SIG</td>
+                        <td><span class="badge generated">Generated</span></td>
+                        <td><button class="action-btn" onclick="alert('Opening document for review...')">Review</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>

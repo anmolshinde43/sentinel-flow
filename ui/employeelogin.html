@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Login | Sentinel-Flow</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0f172a; 
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary-accent: #3b82f6; 
+            --secondary-accent: #06b6d4; 
+            --danger-accent: #f43f5e;
+            --success-accent: #10b981;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --input-bg: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(6, 182, 212, 0.1) 0%, var(--bg-color) 70%);
+        }
+
+        /* --- NAVIGATION --- */
+        .back-nav {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+        }
+
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--text-main);
+        }
+
+        /* --- AUTH CONTAINER --- */
+        .auth-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 3rem 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s ease;
+            text-align: center;
+        }
+
+        .auth-container h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        /* --- FORM ELEMENTS --- */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .input-group {
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 0.9rem 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: #64748b;
+        }
+
+        input:focus {
+            border-color: var(--secondary-accent);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+        }
+
+        button[type="submit"] {
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        #msg {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            min-height: 20px; /* Prevents layout shift */
+        }
+
+        .auth-footer {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .auth-footer a {
+            color: var(--secondary-accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .auth-footer a:hover {
+            color: var(--primary-accent);
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="back-nav">
+        <a href="index.html" class="back-link">← Back to Portal</a>
+    </div>
+
+    <div class="auth-container">
+        <h2>Employee Access</h2>
+        <p class="subtitle">Secure login to your staff dashboard</p>
+
+        <form onsubmit="return loginEmployee()">
+            
+            <div class="input-group">
+                <input type="email" id="loginEmail" placeholder="Work Email Address" required>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="loginPassword" placeholder="Password" required>
+            </div>
+
+            <button type="submit">Secure Login</button>
+
+            <p id="msg"></p>
+
+            <p class="auth-footer">
+                New Employee? <a href="employeeregister.html">Register here</a>
+            </p>
+
+        </form>
+    </div>
+
+    <script>
+        function loginEmployee() {
+            let email = document.getElementById("loginEmail").value;
+            let password = document.getElementById("loginPassword").value;
+            let msgBox = document.getElementById("msg");
+
+            // Reset message
+            msgBox.innerText = "";
+            msgBox.style.color = "inherit";
+
+            // Fetch stored credentials
+            let storedEmail = localStorage.getItem("empEmail");
+            let storedPassword = localStorage.getItem("empPassword");
+
+            if (email === storedEmail && password === storedPassword) {
+                msgBox.innerText = "✅ Authentication Successful. Redirecting...";
+                msgBox.style.color = "var(--success-accent)";
+                
+                // Slight delay so the user sees the success message before jumping
+                setTimeout(() => {
+                    window.location.href = "employeehome.html";
+                }, 800);
+                
+            } else {
+                msgBox.innerText = "❌ Invalid Email or Password. Please try again.";
+                msgBox.style.color = "var(--danger-accent)";
+            }
+
+            return false;
+        }
+    </script>
+
+</body>
+</html>

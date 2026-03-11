@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel-Flow | Intelligent Workforce Governance</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&amp;display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0f172a; /* Deep slate */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary-accent: #3b82f6; /* Blue */
+            --secondary-accent: #06b6d4; /* Cyan */
+            --card-bg: #1e293b;
+            --card-border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(circle at top center, rgba(59, 130, 246, 0.15) 0%, transparent 60%);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: var(--secondary-accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .project-name {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .description {
+            max-width: 700px;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        /* --- BUTTONS --- */
+        .primary-btn {
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+        }
+
+        #portalOptions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #portalOptions.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .portal-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .portal-btn:hover {
+            background: #2dd4bf; /* Teal accent */
+            color: #0f172a;
+            border-color: #2dd4bf;
+            transform: translateY(-2px);
+        }
+
+        /* --- FEATURES SECTION --- */
+        .features {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            font-weight: 600;
+        }
+
+        .feature-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 2.5rem;
+            border-radius: 16px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--secondary-accent);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-accent);
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+        }
+
+        /* --- WORKFLOW SECTION --- */
+        .workflow {
+            padding: 5rem 2rem;
+            background: rgba(30, 41, 59, 0.5); /* slightly lighter than background */
+        }
+
+        .workflow-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .step {
+            background: var(--bg-color);
+            border: 2px solid var(--primary-accent);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .arrow {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- ANIMATIONS & MEDIA QUERIES --- */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .workflow-steps {
+                flex-direction: column;
+            }
+            .arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hero">
+        <h2 class="subtitle">Welcome To</h2>
+        
+        <h1 class="project-name">
+            SENTINEL-FLOW
+        </h1>
+        
+        <p class="tagline">
+            Smart Workforce Governance Through Intelligent Automation
+        </p>
+        
+        <p class="description">
+            Sentinel-Flow transforms employee contracts into intelligent workflows that 
+            automatically track evaluations, detect bias, and ensure compliance across the 
+            entire workforce lifecycle.
+        </p>
+
+        <button class="primary-btn" onclick="showOptions()">
+            Register Yourself
+        </button>
+
+        <div id="portalOptions">
+            <button class="portal-btn" onclick="location.href='hrregister.html'">
+                HR Portal
+            </button>
+            <button class="portal-btn" onclick="location.href='employeeregister.html'">
+                Employee Portal
+            </button>
+        </div>
+    </header>
+
+    <section class="features">
+        <h2 class="section-title">Core System Features</h2>
+        
+        <div class="feature-container">
+            <div class="feature-card">
+                <h3>Smart Workflows</h3>
+                <p>Automates the contract lifecycle smoothly from initial onboarding all the way to final HR decisions.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>AI Bias Detection</h3>
+                <p>Analyzes reviewer comments and intelligently flags subjective language before any approvals occur.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Governance Vault</h3>
+                <p>Highly secure and immutable storage for all contracts, audits, and necessary compliance records.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="workflow">
+        <h2 class="section-title">Contract Evaluation Workflow</h2>
+        
+        <div class="workflow-steps">
+            <div class="step">Employee Onboarding</div>
+            <div class="arrow">→</div>
+            
+            <div class="step">Mentor Review</div>
+            <div class="arrow">→</div>
+            
+            <div class="step">Manager Evaluation</div>
+            <div class="arrow">→</div>
+            
+            <div class="step">HR Decision</div>
+        </div>
+    </section>
+
+    <footer>
+        <p><strong>Developed for CODEBITS Competition</strong></p>
+        <p>Project: Sentinel-Flow</p>
+    </footer>
+
+    <script>
+        function showOptions() {
+            const options = document.getElementById("portalOptions");
+            // Toggles a CSS class rather than setting inline styles for smoother animation
+            options.classList.toggle("show");
+        }
+    </script>
+
+</body>
+</html>

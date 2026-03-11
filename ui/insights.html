@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights | Sentinel-Flow</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0f172a; /* Deep slate */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary-accent: #3b82f6; /* Blue */
+            --secondary-accent: #06b6d4; /* Cyan */
+            --success-accent: #10b981; /* Emerald Green */
+            --warning-accent: #f59e0b; /* Amber */
+            --card-bg: #1e293b;
+            --card-border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- TOP NAVBAR --- */
+        nav {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--text-main);
+            border-color: var(--text-muted);
+            background: var(--card-bg);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .dashboard-container {
+            flex: 1;
+            padding: 4rem 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* --- CARDS & GRID --- */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-accent), var(--secondary-accent));
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--card-border);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- DYNAMIC METRIC BARS --- */
+        .metric-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .metric-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .metric-bar-bg {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-color);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            width: 0; /* Starts at 0 for animation */
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Specific colors for different metrics */
+        .fill-blue { background-color: var(--primary-accent); }
+        .fill-cyan { background-color: var(--secondary-accent); }
+        .fill-green { background-color: var(--success-accent); }
+        .fill-amber { background-color: var(--warning-accent); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="nav-logo">SENTINEL-FLOW</a>
+        <a href="index.html" class="back-btn">← Back to Home</a> 
+    </nav>
+
+    <div class="dashboard-container">
+        
+        <div class="header-section">
+            <h2 class="section-title">Performance Insights</h2>
+            <p class="section-subtitle">Dynamic Evaluation Metrics Based on Role Requirements</p>
+        </div>
+
+        <div class="metrics-grid">
+            
+            <div class="card">
+                <h3>💻 Software Intern</h3>
+                
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Code Quality Score</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="metric-bar-bg">
+                        <div class="metric-bar-fill fill-blue" data-width="85%"></div>
+                    </div>
+                </div>
+
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Project Completion</span>
+                        <span>92%</span>
+                    </div>
+                    <div class="metric-bar-bg">
+                        <div class="metric-bar-fill fill-cyan" data-width="92%"></div>
+                    </div>
+                </div>
+
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Mentor Feedback</span>
+                        <span>78%</span>
+                    </div>
+                    <div class="metric-bar-bg">
+                        <div class="metric-bar-fill fill-green" data-width="78%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>⚙️ Factory Intern</h3>
+                
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Safety Compliance</span>
+                        <span>100%</span>
+                    </div>
+                    <div class="metric-bar-bg">
+                        <div class="metric-bar-fill fill-green" data-width="100%"></div>
+                    </div>
+                </div>
+
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Attendance</span>
+                        <span>95%</span>
+                    </div>
+                    <div class="metric-bar-bg">
+                        <div class="metric-bar-fill fill-blue" data-width="95%"></div>
+                    </div>
+                </div>
+
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Supervisor Review</span>
+                        <span>65%</span>
+                    </div>
+                    <div class="metric-bar-bg">
+                        <div class="metric-bar-fill fill-amber" data-width="65%"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Slight delay so the user sees the animation start
+            setTimeout(() => {
+                const bars = document.querySelectorAll('.metric-bar-fill');
+                bars.forEach(bar => {
+                    const targetWidth = bar.getAttribute('data-width');
+                    bar.style.width = targetWidth;
+                });
+            }, 300);
+        });
+    </script>
+
+</body>
+</html>

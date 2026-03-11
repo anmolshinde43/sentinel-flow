@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sentinel Risk Predictor</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; padding: 50px; }
+        .box { background: #2d2d2d; padding: 30px; border-radius: 15px; max-width: 400px; margin: auto; border: 1px solid #444; }
+        input { width: 100%; padding: 10px; margin: 10px 0; background: #111; border: 1px solid #555; color: white; border-radius: 5px; }
+        button { width: 100%; padding: 12px; background: #007bff; border: none; color: white; font-weight: bold; cursor: pointer; border-radius: 5px; }
+        #status { margin-top: 20px; padding: 10px; border-radius: 5px; font-size: 0.9em; background: #000; color: #0f0; border: 1px solid #333; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>📊 Sentinel Predictor</h2>
+    <input type="number" id="att" placeholder="Attendance % (e.g. 95)">
+    <input type="number" id="safe" placeholder="Safety Incidents (e.g. 0)">
+    <input type="number" id="score" placeholder="Manager Score (1-10)">
+    <button onclick="runAnalysis()">RUN ANALYSIS</button>
+    
+    <div id="status">System Ready. Waiting for input...</div>
+</div>
+
+<script>
+    async function runAnalysis() {
+        const statusDiv = document.getElementById('status');
+        statusDiv.innerText = "⏳ Connecting to Server...";
+        statusDiv.style.color = "#aaa";
+
+        const payload = {
+            attendance_pct: parseFloat(document.getElementById('att').value),
+            safety_incidents: parseInt(document.getElementById('safe').value),
+            manager_score: parseFloat(document.getElementById('score').value)
+        };
+
+        try {
+            // Check: Ensure your terminal says 127.0.0.1:8000. If it says 0.0.0.0, use 127.0.0.1 anyway.
+            const response = await fetch('http://127.0.0.1:8000/api/ai/predict-risk', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            statusDiv.innerHTML = `✅ Result: ${data.risk_level}<br>🎯 Confidence: ${data.confidence_score}%`;
+            statusDiv.style.color = "#0f0";
+
+        } catch (error) {
+            statusDiv.innerHTML = `❌ Connection Failed!<br>Error: ${error.message}<br><small>Make sure main.py is running!</small>`;
+            statusDiv.style.color = "#ff4d4d";
+            console.error(error);
+        }
+    }
+</script>
+</body>
+</html>

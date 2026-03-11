@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sentinel-Flow | HR Audit Portal</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --danger: #f43f5e;
+            --safe: #10b981;
+            --text: #f1f5f9;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg); 
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .portal-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card);
+            padding: 35px;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 { color: #38bdf8; margin-bottom: 25px; font-weight: 600; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+
+        .input-group { margin-bottom: 20px; }
+        
+        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            background: #0f172a; 
+            border: 1px solid #334155; 
+            border-radius: 8px; 
+            color: white;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        button { 
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+            text-transform: uppercase;
+        }
+
+        .btn-primary { background: #38bdf8; color: #0f172a; margin-bottom: 15px; }
+        .btn-primary:hover { background: #7dd3fc; transform: scale(1.02); }
+
+        .btn-pdf { 
+            background: transparent; 
+            border: 1px solid var(--danger); 
+            color: var(--danger); 
+            display: none; 
+        }
+        .btn-pdf:hover { background: var(--danger); color: white; }
+
+        .result-display {
+            margin-top: 25px;
+            padding: 20px;
+            background: #0f172a;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+            border-left: 4px solid #334155;
+        }
+
+        .risk-text { font-size: 24px; font-weight: 800; letter-spacing: 2px; }
+        .high-risk { color: var(--danger); animation: pulse 1.5s infinite; }
+        .low-risk { color: var(--safe); }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="portal-container">
+    <h2>🛡️ HR AUDIT COMMAND</h2>
+    
+    <div class="input-group">
+        <label>Employee ID</label>
+        <input type="number" id="empId" placeholder="e.g. 5055">
+    </div>
+
+    <div class="input-group">
+        <label>Incident / Complaint Details</label>
+        <input type="text" id="complaint" placeholder="Describe the threat or issue...">
+    </div>
+
+    <button class="btn-primary" onclick="fileReport()">⚡ Execute AI Assessment</button>
+
+    <div id="resultBox" class="result-display">
+        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 5px;">AI RISK ANALYSIS</div>
+        <div id="hrResult" class="risk-text"></div>
+        <div id="aiAnalysis" style="font-size: 13px; color: #cbd5e1; margin-top: 10px;"></div>
+        <hr style="border: 0; border-top: 1px solid #334155; margin: 20px 0;">
+        <button id="dlBtn" class="btn-pdf" onclick="downloadPDF()">📥 Download Legal Audit PDF</button>
+    </div>
+</div>
+
+<script>
+    let currentId = null;
+
+    async function fileReport() {
+        const empIdInput = document.getElementById('empId').value;
+        const complaintInput = document.getElementById('complaint').value;
+        
+        if(!empIdInput || !complaintInput) return alert("All fields are required for legal filing.");
+
+        currentId = empIdInput;
+        
+        try {
+            const res = await fetch('http://127.0.0.1:8000/api/hr/report-threat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    employee_id: currentId,
+                    complaint_text: complaintInput
+                })
+            });
+            const data = await res.json();
+            
+            // Show result area
+            const resultBox = document.getElementById('resultBox');
+            const hrResult = document.getElementById('hrResult');
+            const aiAnalysis = document.getElementById('aiAnalysis');
+            
+            resultBox.style.display = 'block';
+            hrResult.innerText = data.risk_assessment;
+            aiAnalysis.innerText = data.ai_analysis;
+
+            // Apply styling based on risk
+            if(data.risk_assessment.includes("HIGH")) {
+                hrResult.className = "risk-text high-risk";
+                resultBox.style.borderLeftColor = "#f43f5e";
+            } else {
+                hrResult.className = "risk-text low-risk";
+                resultBox.style.borderLeftColor = "#10b981";
+            }
+
+            document.getElementById('dlBtn').style.display = 'block';
+        } catch (err) {
+            alert("Audit Failed: Server connection lost.");
+        }
+    }
+
+    function downloadPDF() {
+    // We grab the text currently inside the hrResult div
+    const riskStatus = document.getElementById('hrResult').innerText;
+    window.location.href = `http://127.0.0.1:8000/api/reports/generate-legal-pdf?employee_id=${currentId}&risk=${riskStatus}`;
+}
+</script>
+
+</body>
+</html>

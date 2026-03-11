@@ -1,0 +1,12 @@
+# Environments
+.env
+__pycache__/
+venv/
+env/
+
+# ML Models and Docs
+*.pkl
+*.pdf
+
+# Jupyter Checkpoints
+.ipynb_checkpoints/
