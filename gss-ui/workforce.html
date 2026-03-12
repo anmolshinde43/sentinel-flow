@@ -149,10 +149,6 @@
             min-width: 250px;
         }
 
-        .toolbar input:focus {
-            border-color: var(--secondary-accent);
-        }
-
         .toolbar button {
             background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
             color: white;
@@ -164,102 +160,61 @@
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .toolbar button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        /* --- MODAL STYLES --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* --- TABLES & BADGES --- */
+        .modal {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            width: 400px;
+        }
+
+        .modal h3 { margin-bottom: 1rem; }
+        .modal input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            color: white;
+            border-radius: 6px;
+        }
+
+        .modal-actions { display: flex; gap: 10px; }
+
+        /* --- TABLE STYLES --- */
         .table-responsive {
             width: 100%;
-            overflow-x: auto;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 1.2rem 1.5rem;
-            text-align: left;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        th {
-            background: rgba(255, 255, 255, 0.02);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: rgba(255, 255, 255, 0.02); }
-
-        .employee-name {
-            font-weight: 600;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1.2rem 1.5rem; text-align: left; border-bottom: 1px solid var(--card-border); }
+        
         .avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
+            width: 35px; height: 35px; border-radius: 50%;
             background: var(--card-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .dept-text {
-            color: var(--text-muted);
-            font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 0.85rem;
         }
 
         .badge {
-            display: inline-block;
-            padding: 0.35rem 0.85rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            padding: 0.35rem 0.85rem; border-radius: 50px;
+            font-size: 0.8rem; font-weight: 600;
         }
-
-        .badge.active-status { background: rgba(16, 185, 129, 0.15); color: var(--success-accent); }
-        .badge.review { background: rgba(245, 158, 11, 0.15); color: var(--warning-accent); }
-        .badge.pending { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
-
-        .action-btn {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--card-border);
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-right: 0.5rem;
-        }
-
-        .action-btn:hover {
-            color: var(--primary-accent);
-            border-color: var(--primary-accent);
-            background: rgba(59, 130, 246, 0.1);
-        }
+        .active-status { background: rgba(16, 185, 129, 0.15); color: var(--success-accent); }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
@@ -278,24 +233,23 @@
     </header>
 
     <nav class="navbar">
-        <button class="nav-btn" onclick="location.href='index.html'">Home</button>
-        <button class="nav-btn active" onclick="location.href='workforces.html'">Workforces</button>
-        <button class="nav-btn" onclick="location.href='operations.html'">Operations</button>
-        <button class="nav-btn" onclick="location.href='insights.html'">Insights</button>
-        <button class="nav-btn" onclick="location.href='governance.html'">Governance Vault</button>
-        <button class="nav-btn" onclick="location.href='help.html'">Help Center</button>
+    <button class="nav-btn" onclick="location.href='index.html'">Home</button>
+    <button class="nav-btn active" onclick="location.href='workforce.html'">Workforces</button>
+    <button class="nav-btn" onclick="location.href='operations.html'">Operations</button>
+    <button class="nav-btn" onclick="location.href='insights.html'">Insights</button>
+    <button class="nav-btn" onclick="location.href='governance.html'">Governance Vault</button>
+    <button class="nav-btn" onclick="location.href='help.html'">Help Center</button>
     </nav>
 
     <div class="dashboard-container">
-        
         <div class="section-header">
             <div class="header-title">
                 <h2>Workforce Directory</h2>
-                <p>Manage employee records, roles, and current statuses.</p>
+                <p>Manage employee records and current statuses.</p>
             </div>
             <div class="toolbar">
-                <input type="text" placeholder="Search employees by name or role...">
-                <button onclick="alert('Opening New Employee Form...')">+ Add Employee</button>
+                <input type="text" id="searchInput" placeholder="Search employees..." onkeyup="filterTable()">
+                <button onclick="toggleModal(true)">+ Add Employee</button>
             </div>
         </div>
 
@@ -305,62 +259,110 @@
                     <tr>
                         <th>Employee Name</th>
                         <th>Role</th>
-                        <th>Department</th>
+                        <th>Email</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="employee-name">
-                                <div class="avatar">BA</div>
-                                Bamn Alex
-                            </div>
-                        </td>
-                        <td>Factory Intern</td>
-                        <td class="dept-text">Manufacturing</td>
-                        <td><span class="badge active-status">Active</span></td>
-                        <td>
-                            <button class="action-btn">View</button>
-                            <button class="action-btn">Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="employee-name">
-                                <div class="avatar">CV</div>
-                                Ciro V.
-                            </div>
-                        </td>
-                        <td>Software Intern</td>
-                        <td class="dept-text">Engineering</td>
-                        <td><span class="badge review">Under Review</span></td>
-                        <td>
-                            <button class="action-btn">View</button>
-                            <button class="action-btn">Edit</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="employee-name">
-                                <div class="avatar">ER</div>
-                                Eva R.
-                            </div>
-                        </td>
-                        <td>Junior Developer</td>
-                        <td class="dept-text">Engineering</td>
-                        <td><span class="badge pending">Onboarding</span></td>
-                        <td>
-                            <button class="action-btn">View</button>
-                            <button class="action-btn">Edit</button>
-                        </td>
-                    </tr>
-                </tbody>
+                <tbody id="employeeTableBody">
+                    </tbody>
             </table>
         </div>
-
     </div>
 
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3>New Employee</h3>
+            <input type="text" id="empName" placeholder="Full Name">
+            <input type="text" id="empRole" placeholder="Job Role">
+            <input type="email" id="empEmail" placeholder="Email Address">
+            <input type="number" id="empSalary" placeholder="Salary">
+            <div class="modal-actions">
+                <button onclick="submitEmployee()" style="flex:2; background: var(--primary-accent); border:none; color:white; padding: 0.8rem; border-radius:6px; cursor:pointer;">Add Record</button>
+                <button onclick="toggleModal(false)" style="flex:1; background: transparent; border: 1px solid var(--card-border); color: white; border-radius:6px; cursor:pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+
+        // 1. Fetch and Display Employees
+        async function fetchEmployees() {
+            try {
+                const response = await fetch(`${API_URL}/employees`);
+                const data = await response.json();
+                const tableBody = document.getElementById('employeeTableBody');
+                tableBody.innerHTML = '';
+
+                data.forEach(emp => {
+                    const initials = emp.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    const row = `
+                        <tr>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <div class="avatar">${initials}</div>
+                                    <span class="emp-name-cell">${emp.name}</span>
+                                </div>
+                            </td>
+                            <td>${emp.role}</td>
+                            <td style="color:var(--text-muted); font-size:0.9rem;">${emp.email}</td>
+                            <td><span class="badge active-status">Active</span></td>
+                            <td>
+                                <button style="background:transparent; border:1px solid var(--card-border); color:var(--text-muted); padding:4px 8px; border-radius:4px; cursor:pointer;">Edit</button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("Error fetching employees:", error);
+            }
+        }
+
+        // 2. Toggle Modal
+        function toggleModal(show) {
+            document.getElementById('modalOverlay').style.display = show ? 'flex' : 'none';
+        }
+
+        // 3. Submit New Employee
+        async function submitEmployee() {
+            const payload = {
+                name: document.getElementById('empName').value,
+                role: document.getElementById('empRole').value,
+                email: document.getElementById('empEmail').value,
+                salary: parseFloat(document.getElementById('empSalary').value)
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/employees`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    toggleModal(false);
+                    fetchEmployees(); // Refresh list
+                    alert("Employee added successfully!");
+                }
+            } catch (error) {
+                alert("Failed to add employee. Is the backend running?");
+            }
+        }
+
+        // 4. Client-side Search Filter
+        function filterTable() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const rows = document.querySelectorAll("#employeeTableBody tr");
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(input) ? "" : "none";
+            });
+        }
+
+        // Initialize
+        window.onload = fetchEmployees;
+    </script>
 </body>
 </html>

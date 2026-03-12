@@ -1,13 +1,57 @@
-from fastapi import FastAPI
+import os
+import random
+import datetime
+import joblib
+from typing import List, Optional
+
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from database import engine, SessionLocal
-from models import Employee
-from schemas import EmployeeCreate
+from pydantic import BaseModel
+from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
+from dotenv import load_dotenv
 
-app = FastAPI()
+# --- 1. DATABASE SETUP ---
+load_dotenv()
+# Ensure your .env has DATABASE_URL="postgresql+psycopg2://..."
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# --- 1. ENABLE CORS ---
-# This is required for your frontend (Live Server) to access the backend
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+# --- 2. DATABASE MODELS ---
+class Employee(Base):
+    __tablename__ = "employees"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    email = Column(String, unique=True)
+    role = Column(String)
+    salary = Column(Float, default=0.0)
+
+# Create tables if they don't exist
+Base.metadata.create_all(bind=engine)
+
+# Dependency to get DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# --- 3. DATA SCHEMAS (Pydantic) ---
+class EmployeeCreate(BaseModel):
+    name: str
+    role: str
+    email: str
+    salary: float
+
+# --- 4. APP INITIALIZATION ---
+app = FastAPI(title="Sentinel Flow Backend")
+
+# ENABLE CORS - Essential for your frontend to talk to this backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,74 +59,69 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- 2. DASHBOARD ENDPOINTS ---
+# --- 5. DASHBOARD ENDPOINTS ---
 
 @app.get("/api/stats")
-def get_dashboard_stats():
-    db = SessionLocal()
+def get_dashboard_stats(db: Session = Depends(get_db)):
+    """Returns counts for the dashboard top cards."""
     try:
-        # Count real employees from your database
         active_count = db.query(Employee).count()
-        # Mocking pending reviews for now, or you can count employees with specific status
-        pending_count = 2 
-        
+        # We'll keep pending reviews as a mock number or count specific logic
         return {
             "active_employees": active_count,
-            "pending_reviews": pending_count
+            "pending_reviews": 4 
         }
-    finally:
-        db.close()
+    except Exception as e:
+        return {"error": str(e), "active_employees": 0, "pending_reviews": 0}
 
 @app.get("/api/milestones")
-def get_milestones():
-    db = SessionLocal()
+def get_milestones(db: Session = Depends(get_db)):
+    """Returns the most recent 3-5 employees for the 'Recent Audit' table."""
     try:
-        # Fetch the last 3 employees to show in the "Recent Audit" table
-        employees = db.query(Employee).order_by(Employee.id.desc()).limit(3).all()
+        employees = db.query(Employee).order_by(Employee.id.desc()).limit(5).all()
         
         milestones = []
         for emp in employees:
             milestones.append({
                 "name": emp.name,
-                "milestone": f"{emp.role} Onboarding",
-                "status": "Done" if emp.salary > 0 else "In Progress" # Example logic
+                "milestone": f"{emp.role} Audit",
+                "status": "Done" if (emp.salary or 0) > 0 else "In Progress"
             })
         return milestones
-    finally:
-        db.close()
+    except Exception as e:
+        return []
 
-# --- 3. EXISTING CRUD ENDPOINTS ---
+# --- 6. CRUD ENDPOINTS ---
 
 @app.get("/")
 def read_root():
-    return {"message": "Sentinel Flow Backend is running"}
+    return {"message": "Sentinel Flow Backend is active"}
+
+@app.get("/employees")
+def get_all_employees(db: Session = Depends(get_db)):
+    return db.query(Employee).all()
 
 @app.post("/employees")
-def create_employee(emp: EmployeeCreate):
-    db = SessionLocal()
-    try:
-        new_employee = Employee(
-            name=emp.name,
-            email=emp.email,
-            role=emp.role,
-            salary=emp.salary
-        )
-        db.add(new_employee)
-        db.commit()
-        db.refresh(new_employee)
-        return new_employee
-    finally:
-        db.close()
+def create_employee(emp: EmployeeCreate, db: Session = Depends(get_db)):
+    new_employee = Employee(
+        name=emp.name,
+        email=emp.email,
+        role=emp.role,
+        salary=emp.salary
+    )
+    db.add(new_employee)
+    db.commit()
+    db.refresh(new_employee)
+    return new_employee
 
 @app.get("/employees/{employee_id}")
-def get_employee(employee_id: int): # Changed to int to match standard DB IDs
-    db = SessionLocal()
-    try:
-        employee = db.query(Employee).filter(Employee.id == employee_id).first()
-        if not employee:
-            return {"message": "Employee not found"}
-        return employee
-    finally:
-        db.close()
+def get_employee(employee_id: int, db: Session = Depends(get_db)):
+    employee = db.query(Employee).filter(Employee.id == employee_id).first()
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return employee
 
-# ... (Keep your existing PUT and DELETE methods below) ...
+# --- 7. RUN SERVER ---
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

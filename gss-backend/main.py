@@ -1,20 +1,50 @@
-from apscheduler.schedulers.background import BackgroundScheduler
-import datetime
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-import joblib
 import os
 import random
-from fastapi.middleware.cors import CORSMiddleware
-from reportlab.pdfgen import canvas
-from fastapi.responses import FileResponse
+import datetime
+import joblib
+from typing import List
 
-# --- TASK 3: BACKGROUND AUTOMATION ---
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
+from apscheduler.schedulers.background import BackgroundScheduler
+from reportlab.pdfgen import canvas
+from dotenv import load_dotenv
+
+# --- 1. CONFIGURATION & DATABASE SETUP ---
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# SQLAlchemy setup
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+# --- 2. DATABASE MODELS ---
+class Employee(Base):
+    __tablename__ = "employees"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    role = Column(String)
+    # Add other columns here (e.g., department, email) if they exist in Supabase
+
+# Dependency to get DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# --- 3. BACKGROUND AUTOMATION ---
 def compliance_check_job():
     emp_id = random.randint(1000, 9999)
     timestamp = datetime.datetime.now().strftime("%H:%M:%S")
     print(f"--- 🕒 [SENTINEL-WATCH] Scan @ {timestamp} ---")
-    
     if emp_id % 3 == 0:
         print(f"🚨 ALERT: Potential High-Risk Sentiment detected in ID #{emp_id}!")
     else:
@@ -22,12 +52,12 @@ def compliance_check_job():
     print("------------------------------------------------------------")
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=compliance_check_job, trigger="interval", seconds=10)
+scheduler.add_job(func=compliance_check_job, trigger="interval", seconds=60) # Changed to 60s to avoid spamming console
 scheduler.start()
 
+# --- 4. FASTAPI APP INITIALIZATION ---
 app = FastAPI(title="Sentinel-Flow API")
 
-# --- CORS SETTINGS (Crucial for React) ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,18 +66,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- MODEL LOADING ---
+# --- 5. ML MODEL LOADING ---
 MODEL_PATH = "models/sentinel_risk_model.pkl"
 try:
     current_dir = os.path.dirname(os.path.abspath(__file__))
     full_path = os.path.join(current_dir, MODEL_PATH)
     model = joblib.load(full_path)
     print("✅ Sentinel-Flow ML Engine Loaded Successfully.")
-except FileNotFoundError:
+except Exception as e:
     model = None
-    print(f"❌ CRITICAL ERROR: Could not find {MODEL_PATH}")
+    print(f"⚠️ ML Engine Offline: {e}")
 
-# --- DATA MODELS ---
+# --- 6. DATA SCHEMAS (Pydantic) ---
 class WorkerStats(BaseModel):
     attendance_pct: float
     safety_incidents: int
@@ -60,7 +90,16 @@ class HRComplaint(BaseModel):
     employee_id: int
     complaint_text: str
 
-# --- ENDPOINTS ---
+# --- 7. ENDPOINTS ---
+
+# NEW: Database Endpoint to fetch employees from Supabase
+@app.get("/employees")
+def read_employees(db: Session = Depends(get_db)):
+    try:
+        employees = db.query(Employee).all()
+        return employees
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database Error: {str(e)}")
 
 @app.post("/api/ai/predict-risk")
 async def predict_risk(stats: WorkerStats):
@@ -70,8 +109,6 @@ async def predict_risk(stats: WorkerStats):
     features = [[stats.attendance_pct, stats.safety_incidents, stats.manager_score]]
     prediction = model.predict(features)[0]
     probabilities = model.predict_proba(features)[0]
-    
-    # Corrected: Get probability of the specific prediction
     confidence = probabilities[1] if prediction == 1 else probabilities[0]
     
     return {
@@ -82,7 +119,7 @@ async def predict_risk(stats: WorkerStats):
 
 @app.post("/api/ai/sanitize-review")
 async def sanitize_review(review: ManagerReview):
-    sanitized_text = "The employee demonstrated consistent technical output. However, punctuality issues were noted twice this week."
+    sanitized_text = "The employee demonstrated consistent technical output. Punctuality was noted for review."
     return {
         "original_review": review.raw_text,
         "sanitized_review": sanitized_text,
@@ -93,50 +130,33 @@ async def sanitize_review(review: ManagerReview):
 async def report_threat(complaint: HRComplaint):
     is_serious = any(word in complaint.complaint_text.lower() for word in ["legal", "threat", "sue", "quit"])
     risk_level = "HIGH RISK" if is_serious else "LOW RISK"
-    
     return {
         "event": "Manual HR Filing",
         "employee_id": complaint.employee_id,
         "risk_assessment": risk_level,
-        "ai_analysis": "Keywords triggered immediate escalation" if is_serious else "General feedback recorded",
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
 
-# --- PDF GENERATOR ENDPOINT ---
 @app.get("/api/reports/generate-legal-pdf")
 async def generate_pdf(employee_id: int, risk: str = "UNDEFINED"):
     file_path = f"Audit_Report_{employee_id}.pdf"
-    
-    # Create the PDF
     c = canvas.Canvas(file_path)
-    
-    # Draw a Border
-    c.setStrokeColorRGB(0.2, 0.2, 0.2)
     c.rect(50, 50, 500, 750)
-    
-    # Header
     c.setFont("Helvetica-Bold", 20)
     c.drawString(100, 770, "SENTINEL-FLOW: LEGAL AUDIT")
-    
-    # Audit Details
     c.setFont("Helvetica", 12)
-    c.drawString(100, 730, f"Report Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    c.drawString(100, 710, f"Employee Subject ID: #{employee_id}")
+    c.drawString(100, 730, f"Report Date: {datetime.datetime.now()}")
+    c.drawString(100, 710, f"Employee ID: #{employee_id}")
     
-    # Risk Assessment (Styled based on severity)
-    c.setFont("Helvetica-Bold", 14)
     if "HIGH" in risk.upper():
-        c.setFillColorRGB(0.8, 0, 0) # Red Text
+        c.setFillColorRGB(0.8, 0, 0)
     else:
-        c.setFillColorRGB(0, 0.5, 0) # Green Text
+        c.setFillColorRGB(0, 0.5, 0)
         
     c.drawString(100, 680, f"FINAL ASSESSMENT: {risk}")
-    
-    # Reset color to black for text
-    c.setFillColorRGB(0, 0, 0)
-    c.setFont("Helvetica-Oblique", 10)
-    c.drawString(100, 650, "Note: This document is an AI-generated compliance record.")
-    c.drawString(100, 635, "Any 'High Risk' status requires immediate manual review by legal.")
-    
     c.save()
     return FileResponse(file_path, media_type='application/pdf', filename=file_path)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

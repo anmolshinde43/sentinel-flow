@@ -30,7 +30,6 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: opacity 0.5s ease;
         }
 
         /* --- TOPBAR --- */
@@ -103,7 +102,6 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
         }
 
         .nav-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
@@ -134,8 +132,41 @@
             font-size: 0.8rem;
         }
 
-        .refresh-btn:hover { background: var(--card-border); }
+        /* --- TOOLBOX --- */
+        .toolbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
 
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 1.8rem;
+            border-radius: 12px;
+            transition: transform 0.3s ease, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .tool-card:hover { transform: translateY(-5px); border-color: var(--secondary-accent); }
+        .tool-card h4 { color: var(--secondary-accent); margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .tool-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+        .tool-btn {
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            color: white;
+            border: none;
+            padding: 0.7rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* --- STAT CARDS --- */
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -147,10 +178,7 @@
             border: 1px solid var(--card-border);
             padding: 1.8rem;
             border-radius: 12px;
-            transition: transform 0.3s ease, border-color 0.3s;
         }
-
-        .card:hover { transform: translateY(-5px); border-color: var(--secondary-accent); }
 
         .analytics-card { text-align: center; }
         .analytics-card p { font-size: 3.5rem; font-weight: 800; color: var(--primary-accent); margin: 0; }
@@ -172,7 +200,6 @@
         .badge.done { background: rgba(16, 185, 129, 0.15); color: var(--success-accent); }
         .badge.current { background: rgba(59, 130, 246, 0.15); color: var(--primary-accent); }
 
-        /* --- BIAS SECTION --- */
         .bias-box {
             background: var(--card-bg);
             padding: 1.5rem;
@@ -181,7 +208,7 @@
         }
 
         textarea {
-            width: 100%; height: 120px;
+            width: 100%; height: 100px;
             background: var(--bg-color);
             border: 1px solid var(--card-border);
             color: var(--text-main);
@@ -192,8 +219,6 @@
             resize: none;
         }
 
-        textarea:focus { border-color: var(--primary-accent); }
-
         .submit-btn {
             background: var(--primary-accent);
             color: white;
@@ -202,13 +227,8 @@
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
         }
-        .submit-btn:hover { opacity: 0.9; transform: scale(0.98); }
 
-        .text-danger { color: var(--danger-accent); font-weight: 600; margin-top: 10px; }
-        .text-success { color: var(--success-accent); font-weight: 600; margin-top: 10px; }
-        
         .pulse {
             display: inline-block;
             width: 10px; height: 10px;
@@ -231,16 +251,19 @@
     <header class="topbar">
         <h1>SENTINEL-FLOW</h1>
         <div class="profile">
-            <span id="topProfileName">Loading Admin...</span>
+            <span id="topProfileName">Admin</span>
             <a class="logout-link" onclick="logout()">Logout</a>
         </div>
     </header>
 
     <nav class="navbar">
-        <a href="dashboard.html" class="nav-btn active">Home</a>
-        <a href="workforce.html" class="nav-btn">Workforces</a>
-        <a href="insights.html" class="nav-btn">Insights</a>
-        <a href="governance.html" class="nav-btn">Governance</a>
+        <button class="nav-btn active" onclick="window.location.href='index.html'">Home</button>
+        <button class="nav-btn" onclick="window.location.href='workforce.html'">Workforces</button>
+        <button class="nav-btn" onclick="window.location.href='hr_portal.html'">HR Portal</button>
+        <button class="nav-btn" onclick="window.location.href='predictor.html'">Predictor</button>
+        <button class="nav-btn" onclick="window.location.href='sanitizer.html'">Sanitizer</button>
+        <button class="nav-btn" onclick="window.location.href='insights.html'">Insights</button>
+        <button class="nav-btn" onclick="window.location.href='governance.html'">Governance</button>
     </nav>
 
     <div class="dashboard-container">
@@ -250,6 +273,33 @@
                 <p>Workforce Streamlining Dashboard</p>
             </div>
             <button class="refresh-btn" onclick="fetchDashboardData()">🔄 Sync Data</button>
+        </section>
+
+        <section>
+            <h3 style="margin-bottom: 1.2rem;">🛠️ SENTINEL TOOLBOX</h3>
+            <div class="toolbox-grid">
+                <div class="tool-card">
+                    <div>
+                        <h4>HR Portal</h4>
+                        <p>Manage secure employee records and digital files.</p>
+                    </div>
+                    <button class="tool-btn" onclick="window.location.href='hr_portal.html'">Open Portal</button>
+                </div>
+                <div class="tool-card">
+                    <div>
+                        <h4>Predictor</h4>
+                        <p>ML Engine for forecasting turnover and growth.</p>
+                    </div>
+                    <button class="tool-btn" onclick="window.location.href='predictor.html'">Run Engine</button>
+                </div>
+                <div class="tool-card">
+                    <div>
+                        <h4>Sanitizer</h4>
+                        <p>Anonymize datasets for safe external reporting.</p>
+                    </div>
+                    <button class="tool-btn" onclick="window.location.href='sanitizer.html'">Sanitize Data</button>
+                </div>
+            </div>
         </section>
 
         <section class="cards">
@@ -266,7 +316,7 @@
             <div class="card">
                 <h3>⚡ System Status</h3>
                 <p id="engineStatus"><span class="pulse"></span> ML Engine Online</p>
-                <p id="connStatus" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 10px;">Verifying API connection...</p>
+                <p id="connStatus" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 10px;">Checking connectivity...</p>
             </div>
         </section>
 
@@ -281,7 +331,7 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody id="milestoneTableBody">
+                    <tbody id="milestone-table">
                         <tr><td colspan="3" style="text-align:center; color: var(--text-muted);">Fetching audit logs...</td></tr>
                     </tbody>
                 </table>
@@ -289,98 +339,80 @@
         </section>
 
         <section class="activity">
-            <h3>🤖 HR BIAS DETECTION ENGINE</h3>
+            <h3>🤖 HR BIAS DETECTION</h3>
             <div class="bias-box">
-                <textarea id="hrComment" placeholder="Analyze performance reviews for subjective bias..."></textarea>
-                <button class="submit-btn" onclick="checkBias()">Analyze & Submit</button>
-                <p id="biasWarning"></p>
+                <textarea id="hrComment" placeholder="Paste review text here..."></textarea>
+                <button class="submit-btn" onclick="checkBias()">Analyze Text</button>
+                <p id="biasWarning" style="margin-top: 10px; font-weight: 600;"></p>
             </div>
         </section>
     </div> 
 
     <script>
-        // Adjust this if your backend is running on a different port
         const API_BASE_URL = "http://127.0.0.1:8000"; 
 
         function initializeUser() {
-            const recentHR = localStorage.getItem("loggedInHRName");
-            if (!recentHR) {
-                window.location.href = "hrlogin.html";
-                return;
-            }
+            const recentHR = localStorage.getItem("loggedInHRName") || "Admin";
             document.getElementById("topProfileName").innerText = `${recentHR} | HR Lead`;
             document.getElementById("welcomeUserName").innerText = `WELCOME BACK, ${recentHR.toUpperCase()}`;
         }
 
         async function fetchDashboardData() {
             const connStatus = document.getElementById("connStatus");
-            connStatus.innerText = "Syncing with Sentinel API...";
-            connStatus.style.color = "var(--text-muted)";
+            connStatus.innerText = "Syncing...";
 
             try {
-                // 1. Fetch Stats
                 const statsRes = await fetch(`${API_BASE_URL}/api/stats`);
-                if (!statsRes.ok) throw new Error();
                 const stats = await statsRes.json();
-                
                 document.getElementById("employeeCount").innerText = stats.active_employees;
                 document.getElementById("taskCount").innerText = stats.pending_reviews;
 
-                // 2. Fetch Milestones
                 const milestoneRes = await fetch(`${API_BASE_URL}/api/milestones`);
                 const milestones = await milestoneRes.json();
                 
-                const tbody = document.getElementById("milestoneTableBody");
-                tbody.innerHTML = ""; 
+                const tableBody = document.getElementById('milestone-table');
+                tableBody.innerHTML = ''; 
 
                 if(!milestones || milestones.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No recent milestones found.</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No data found.</td></tr>`;
                 } else {
                     milestones.forEach(item => {
-                        tbody.innerHTML += `
+                        tableBody.innerHTML += `
                             <tr>
-                                <td><strong>${item.name}</strong></td>
-                                <td>${item.milestone}</td>
+                                <td style="font-weight: 600;">${item.name}</td>
+                                <td style="color: var(--text-muted);">${item.milestone}</td>
                                 <td><span class="badge ${item.status === 'Done' ? 'done' : 'current'}">${item.status}</span></td>
-                            </tr>`;
+                            </tr>
+                        `;
                     });
                 }
-                
-                connStatus.innerText = "All background scans active.";
+                connStatus.innerText = "System Connected";
                 connStatus.style.color = "var(--success-accent)";
-
             } catch (error) {
-                console.error("Connection Error:", error);
-                document.getElementById("employeeCount").innerText = "ERR";
-                document.getElementById("taskCount").innerText = "ERR";
-                connStatus.innerText = "Backend Offline. Run: uvicorn main:app --reload";
+                connStatus.innerText = "Backend Offline";
                 connStatus.style.color = "var(--danger-accent)";
             }
         }
 
         function checkBias() {
             let comment = document.getElementById("hrComment").value.toLowerCase();
-            let biasedWords = ["lazy", "useless", "slow", "careless", "bossy", "emotional", "angry", "aggressive"];
-            let foundWords = biasedWords.filter(word => comment.includes(word));
-            const warningDisplay = document.getElementById("biasWarning");
+            let biasedWords = ["lazy", "useless", "slow", "bossy", "emotional"];
+            let found = biasedWords.filter(word => comment.includes(word));
+            const display = document.getElementById("biasWarning");
 
-            if (!comment.trim()) {
-                warningDisplay.innerText = "Please enter text first.";
-                warningDisplay.className = "";
-                return;
-            }
+            if (!comment.trim()) { display.innerText = "Enter text first."; return; }
 
-            if (foundWords.length > 0) {
-                warningDisplay.innerText = `⚠️ AI Flag: Subjective language detected (${foundWords.join(", ")}).`;
-                warningDisplay.className = "text-danger";
+            if (found.length > 0) {
+                display.innerText = `⚠️ AI Flag: Bias detected (${found.join(", ")})`;
+                display.style.color = "var(--danger-accent)";
             } else {
-                warningDisplay.innerText = "✅ Review clear of subjective bias.";
-                warningDisplay.className = "text-success";
+                display.innerText = "✅ Review clear of subjective bias.";
+                display.style.color = "var(--success-accent)";
             }
         }
 
         function logout() {
-            if(confirm("Confirm Logout?")) {
+            if(confirm("Logout?")) {
                 localStorage.removeItem("loggedInHRName");
                 window.location.href = "hrlogin.html";
             }
