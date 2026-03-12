@@ -113,10 +113,6 @@
             transition: all 0.3s ease;
         }
 
-        input::placeholder {
-            color: #64748b;
-        }
-
         input:focus {
             border-color: var(--primary-accent);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
@@ -145,7 +141,7 @@
             font-size: 0.9rem;
             font-weight: 500;
             margin-top: 0.5rem;
-            min-height: 20px; /* Prevents layout shift */
+            min-height: 20px;
         }
 
         .auth-footer {
@@ -158,14 +154,8 @@
             color: var(--primary-accent);
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.3s;
         }
 
-        .auth-footer a:hover {
-            color: var(--secondary-accent);
-        }
-
-        /* --- ANIMATIONS --- */
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -218,42 +208,38 @@
 
     <script>
         function registerHR() {
-            let id = document.getElementById("regID").value;
-            let name = document.getElementById("regName").value;
-            let email = document.getElementById("regEmail").value;
-            let password = document.getElementById("regPassword").value;
-            let confirmPassword = document.getElementById("confirmPassword").value;
-            let msgBox = document.getElementById("msg");
+            // Get values from inputs
+            const id = document.getElementById("regID").value;
+            const name = document.getElementById("regName").value;
+            const email = document.getElementById("regEmail").value;
+            const password = document.getElementById("regPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const msgBox = document.getElementById("msg");
 
-            // Reset message styles
+            // Reset message
             msgBox.innerText = "";
-            msgBox.style.color = "inherit";
 
-            /* Password confirmation check */
+            // 1. Validate Passwords match
             if (password !== confirmPassword) {
-                msgBox.innerText = "⚠️ Passwords do not match. Please try again.";
+                msgBox.innerText = "⚠️ Passwords do not match.";
                 msgBox.style.color = "var(--danger-accent)";
                 return false;
             }
 
-            /* check if HR email conflicts with employee email */
-            let empEmail = localStorage.getItem("empEmail");
-            if (email === empEmail) {
-                msgBox.innerText = "⚠️ Conflict: HR and Employee email cannot be the same.";
-                msgBox.style.color = "var(--danger-accent)";
-                return false;
-            }
-
-            /* save HR data to localStorage */
+            // 2. Save account data for future logins
             localStorage.setItem("hrID", id);
             localStorage.setItem("hrName", name);
             localStorage.setItem("hrEmail", email);
             localStorage.setItem("hrPassword", password);
 
-            // Display success and redirect smoothly
-            msgBox.innerText = "✅ Registration Successful! Redirecting to login...";
+            // 3. SET THE SESSION (Crucial for Dashboard name display)
+            localStorage.setItem("loggedInHRName", name);
+
+            // Success feedback
+            msgBox.innerText = "✅ Account Created! Redirecting...";
             msgBox.style.color = "var(--success-accent)";
 
+            // Redirect to login page after 1 second
             setTimeout(() => {
                 window.location.href = "hrlogin.html";
             }, 1000);
