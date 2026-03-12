@@ -1,0 +1,15 @@
+{
+  "role": "Factory Intern",
+  "milestones": [
+    {
+      "task": "Safety Check",
+      "offset_days": 30,
+      "assigned_to": "Safety Officer"
+    },
+    {
+      "task": "Performance Review",
+      "offset_days": 60,
+      "assigned_to": "Factory Supervisor"
+    }
+  ]
+}

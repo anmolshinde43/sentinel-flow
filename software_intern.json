@@ -1,0 +1,15 @@
+{
+  "role": "Software Intern",
+  "milestones": [
+    {
+      "task": "Code Review",
+      "offset_days": 45,
+      "assigned_to": "Senior Developer"
+    },
+    {
+      "task": "Final Evaluation",
+      "offset_days": 80,
+      "assigned_to": "Engineering Manager"
+    }
+  ]
+}
